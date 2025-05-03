@@ -1,0 +1,18 @@
+{
+  "name": "modela",
+  "version": "1.0.0",
+  "description": "Modela project",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd Frontend && npm run dev",
+    "build": "cd Frontend && npm run build",
+    "start": "cd Frontend && npm run start",
+    "lint": "cd Frontend && npm run lint",
+    "test": "cd Frontend && npm run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+} 

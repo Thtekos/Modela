@@ -3,6 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { isValidEmail, isValidPassword, isValidName, ValidationError } from "@/lib/validation"
 
 export interface User {
   id: string
@@ -23,6 +24,13 @@ interface AuthContextType {
   logout: () => void
 }
 
+class AuthError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'AuthError'
+  }
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -39,7 +47,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Check for auth in localStorage
           const storedUser = localStorage.getItem("modela_user")
           if (storedUser) {
-            setUser(JSON.parse(storedUser))
+            const parsedUser = JSON.parse(storedUser)
+            // Validate stored user data
+            if (!parsedUser.id || !parsedUser.email || !parsedUser.role) {
+              throw new AuthError('Invalid stored user data')
+            }
+            setUser(parsedUser)
           }
 
           // Also set a cookie for server-side auth checks
@@ -57,7 +70,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (error) {
-        console.error("Authentication error:", error)
+        // Clear invalid data
+        localStorage.removeItem("modela_user")
+        document.cookie = "modela_auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+        setUser(null)
       } finally {
         setIsLoading(false)
       }
@@ -70,6 +86,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
+      // Validate inputs
+      if (!isValidEmail(email)) {
+        throw new AuthError('Invalid email format')
+      }
+      if (!isValidPassword(password)) {
+        throw new AuthError('Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character')
+      }
+
       // For demo purposes, accept any credentials
       await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate API delay
 
@@ -125,8 +149,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push("/dashboard")
       }
     } catch (error) {
-      console.error("Login error:", error)
-      throw error
+      if (error instanceof ValidationError || error instanceof AuthError) {
+        throw error
+      }
+      throw new AuthError('An unexpected error occurred during login')
     } finally {
       setIsLoading(false)
     }
@@ -136,6 +162,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true)
     try {
+      // Validate inputs
+      if (!isValidName(name)) {
+        throw new AuthError('Name is required')
+      }
+      if (!isValidEmail(email)) {
+        throw new AuthError('Invalid email format')
+      }
+      if (!isValidPassword(password)) {
+        throw new AuthError('Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character')
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate API delay
 
       let mockUser: User
@@ -175,8 +212,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Navigate to dashboard
       router.push("/dashboard")
     } catch (error) {
-      console.error("Registration error:", error)
-      throw error
+      if (error instanceof ValidationError || error instanceof AuthError) {
+        throw error
+      }
+      throw new AuthError('An unexpected error occurred during registration')
     } finally {
       setIsLoading(false)
     }
@@ -184,15 +223,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Logout function
   const logout = () => {
-    setUser(null)
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem("modela_user")
+    try {
+      setUser(null)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("modela_user")
+        // Remove auth cookie
+        document.cookie = "modela_auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+      }
+      router.push("/")
+    } catch (error) {
+      // Even if there's an error, ensure the user is logged out
+      setUser(null)
+      router.push("/")
     }
-
-    // Remove auth cookie
-    document.cookie = "modela_auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-
-    router.push("/")
   }
 
   return (

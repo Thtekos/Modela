@@ -11,11 +11,9 @@ import { DashboardHeader } from "@/components/dashboard/header"
 import { ModelDetailHeader } from "@/components/dashboard/model-detail-header"
 import { ArrowLeft, Save } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
-import { use } from "react"
 
-export default function ModelSettingsPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
-  const id = resolvedParams.id
+export default function ModelSettingsPage({ params }: { params: { id: string } }) {
+  const id = params.id
   const [isLoading, setIsLoading] = useState(false)
 
   // In a real app, you would fetch this data from an API

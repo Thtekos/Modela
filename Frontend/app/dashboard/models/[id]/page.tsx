@@ -7,11 +7,9 @@ import { Badge } from "@/components/ui/badge"
 import { DashboardHeader } from "@/components/dashboard/header"
 import { ModelDetailHeader } from "@/components/dashboard/model-detail-header"
 import { ArrowLeft, Server, Shield, FileText } from "lucide-react"
-import { use } from "react"
 
-export default function ModelOverviewPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
-  const id = resolvedParams.id
+export default function ModelOverviewPage({ params }: { params: { id: string } }) {
+  const id = params.id
 
   // In a real app, you would fetch this data from an API
   const modelData = {

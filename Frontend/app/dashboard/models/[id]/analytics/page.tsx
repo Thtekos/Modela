@@ -12,11 +12,9 @@ import { ModelAnalyticsMetrics } from "@/components/dashboard/model-analytics-me
 import { ModelUsageByEndpoint } from "@/components/dashboard/model-usage-by-endpoint"
 import { ModelUsageByCountry } from "@/components/dashboard/model-usage-by-country"
 import { ArrowLeft, Download, Calendar } from "lucide-react"
-import { use } from "react"
 
-export default function ModelAnalyticsPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
-  const id = resolvedParams.id
+export default function ModelAnalyticsPage({ params }: { params: { id: string } }) {
+  const id = params.id
   const [timeRange, setTimeRange] = useState("7d")
 
   // In a real app, you would fetch this data from an API

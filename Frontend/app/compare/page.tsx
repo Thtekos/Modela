@@ -20,7 +20,12 @@ export default function ComparePage() {
   const router = useRouter()
   const [selectedModels, setSelectedModels] = useState<Model[]>([])
   const [isSelectingModel, setIsSelectingModel] = useState(false)
-  const allModels = getAllModels()
+  const [allModels, setAllModels] = useState<Model[]>([])
+
+  // Fetch all models on mount
+  useEffect(() => {
+    getAllModels().then(setAllModels)
+  }, [])
 
   // Load models from URL on initial render and when URL changes
   useEffect(() => {

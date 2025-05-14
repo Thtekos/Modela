@@ -34,7 +34,7 @@ export function generateStaticParams() {
   ]
 }
 
-export default function SolutionCategoryPage({ params }: SolutionCategoryPageProps) {
+export default async function SolutionCategoryPage({ params }: SolutionCategoryPageProps) {
   const { category } = params
   const validCategories = ["legal", "finance", "healthcare", "retail", "manufacturing", "education"]
 
@@ -45,7 +45,7 @@ export default function SolutionCategoryPage({ params }: SolutionCategoryPagePro
   const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1)
 
   // Get models for this category
-  const allModels = getAllModels()
+  const allModels = await getAllModels()
   const categoryModels = allModels
     .filter((model) => model.category.toLowerCase() === category.toLowerCase())
     .slice(0, 3) // Just show top 3

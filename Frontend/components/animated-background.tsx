@@ -27,6 +27,11 @@ export function AnimatedBackground() {
     resizeCanvas()
     window.addEventListener("resize", resizeCanvas)
 
+    // Fallback: If canvas is not sized properly, force a resize after a short delay
+    if (canvas.width === 0 || canvas.height === 0) {
+      setTimeout(resizeCanvas, 50)
+    }
+
     // Trigger a resize event after mount to ensure proper sizing
     window.dispatchEvent(new Event('resize'))
 

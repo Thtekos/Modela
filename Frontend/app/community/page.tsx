@@ -191,57 +191,52 @@ interface ForumTopic {
 
 function ForumTopicCard({ topic }: { topic: ForumTopic }) {
   return (
-    <Card className="bg-gray-800 border-gray-700 hover:border-electric-blue/50 transition-all duration-300">
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <div className="hidden sm:block">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-              <img src={topic.authorAvatar || "/placeholder.svg?height=40&width=40"} alt={topic.author} />
+    <Link href={`/community/topic/${topic.id}`} className="block">
+      <Card className="bg-gray-800 border-gray-700 hover:border-electric-blue/50 transition-all duration-300">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="hidden sm:block">
+              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+                <img src={topic.authorAvatar || "/placeholder.svg?height=40&width=40"} alt={topic.author} />
+              </div>
             </div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <Link href={`/community/topic/${topic.id}`} className="hover:underline">
+            <div className="flex-1 min-w-0">
               <h3 className="text-lg font-bold mb-1 text-white">{topic.title}</h3>
-            </Link>
-            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-400 mb-3">
-              <span>Posted by {topic.author}</span>
-              <span>•</span>
-              <span>{topic.createdAt}</span>
-              <span>•</span>
-              <Link
-                href={`/community/category/${topic.category.toLowerCase()}`}
-                className="hover:underline text-gray-300"
-              >
-                {topic.category}
-              </Link>
-              {topic.solved && (
-                <>
-                  <span>•</span>
-                  <Badge className="bg-green-900/20 text-green-400 border-green-800">Solved</Badge>
-                </>
-              )}
+              <div className="flex flex-wrap items-center gap-2 text-sm text-gray-400 mb-3">
+                <span>Posted by {topic.author}</span>
+                <span>•</span>
+                <span>{topic.createdAt}</span>
+                <span>•</span>
+                <span className="hover:underline text-gray-300 cursor-pointer">{topic.category}</span>
+                {topic.solved && (
+                  <>
+                    <span>•</span>
+                    <Badge className="bg-green-900/20 text-green-400 border-green-800">Solved</Badge>
+                  </>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {topic.tags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="bg-gray-700 text-gray-300 border-gray-600">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {topic.tags.map((tag) => (
-                <Badge key={tag} variant="outline" className="bg-gray-700 text-gray-300 border-gray-600">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex items-center text-sm text-gray-400">
-              <MessageSquare className="h-4 w-4 mr-1" />
-              <span>{topic.replies}</span>
-            </div>
-            <div className="flex items-center text-sm text-gray-400">
-              <ArrowUp className="h-4 w-4 mr-1" />
-              <span>{topic.views}</span>
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center text-sm text-gray-400">
+                <MessageSquare className="h-4 w-4 mr-1" />
+                <span>{topic.replies}</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-400">
+                <ArrowUp className="h-4 w-4 mr-1" />
+                <span>{topic.views}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 
